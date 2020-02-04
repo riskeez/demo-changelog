@@ -1,0 +1,26 @@
+1. /generate?branch={branch}
+
+	1. Get the latest tag
+	2. Get the previous tag if exists
+	3. Call /generate?branch={branch}&from={fromTag}&to={toTag}
+
+2. /generate?branch={branch}&from={fromTag}&to={toTag}
+
+	1. Find fromCommit for fromTag
+	2. Find toCommit for toTag
+	3. Get commits from fromCommit to toCommit 
+	4. Go through commits and get:
+		- work items
+		- commits which are not linked to any of work items
+			 > apply filters to remove some merge commits and etc.
+	5. Work Items:
+		- Get list of work items from ADO
+			> apply filters by tags and etc
+	6. Get markdown-template
+	7. Insert data to template
+	8. Save it to db as a text
+	
+3. Run tasks
+	1) When current task is finished run next task
+	2) When task queue is changed, run next task
+	3) Run task check in background with 30 sec interval (based on appsettings)
