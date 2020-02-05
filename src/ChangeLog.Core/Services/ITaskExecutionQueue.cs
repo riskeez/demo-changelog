@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ChangeLog.Core.Services
@@ -6,6 +7,8 @@ namespace ChangeLog.Core.Services
     public interface ITaskExecutionPool
     {
         Task<TaskData> GetNextTaskAsync(CancellationToken token);
+
+        IEnumerable<TaskData> GetActiveTasksAsync();
 
         Task<ActiveTaskData> SetActiveAsync(TaskData task, CancellationToken token = default);
 

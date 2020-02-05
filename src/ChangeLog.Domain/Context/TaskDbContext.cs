@@ -1,12 +1,8 @@
 ﻿using ChangeLog.Core;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace ChangeLog.API.Data
+namespace ChangeLog.Domain
 {
     public class TaskDbContext : DbContext
     {

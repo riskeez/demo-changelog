@@ -1,19 +1,10 @@
 # ChangeLog Generator
 
-It is a Git and Azure DevOps-based NET Core changelog generator:
+It is a Git, Azure DevOps and NET Core changelog generator:
 
   - Use Git to get the commit history
   - Use Azure DevOps RestAPI to get related work items
-  - Use Hangfire to process background jobs
   - Generate build history based on markdown files
-
-## Interfaces
-#### Tasks
-``` GET /tasks ``` - Returns a list of active and queued tasks
-``` DELETE /tasks/{taskId} ``` - Remove the task from the task list 
-#### Generate
-``` GET /generate?branch={branch}&from={fromTag}&to={toTag}``` - Generate changelog for specific tags
-``` GET /generate?branch={branch} ``` - Generate changelog for the latest release
 
 ## Markdown template
 #### Variables

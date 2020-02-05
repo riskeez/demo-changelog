@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ChangeLog.API.Infrastructure.Settings;
 using ChangeLog.Core.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ChangeLog.API.Services
 {
@@ -15,13 +16,13 @@ namespace ChangeLog.API.Services
     public class TaskBackgroundService : BackgroundService
     {
         private readonly BackgroundTaskSettings _settings;
-        private readonly ITaskRunningService _taskRunner;
+        private readonly IServiceProvider _serviceProvider;
         private readonly ILogger _logger;
 
-        public TaskBackgroundService(IOptions<BackgroundTaskSettings> options, ITaskRunningService taskRunner, ILogger<TaskBackgroundService> logger)
+        public TaskBackgroundService(IOptions<BackgroundTaskSettings> options, IServiceProvider serviceProvider, ILogger<TaskBackgroundService> logger)
         {
             _settings = options?.Value ?? throw new ArgumentNullException(nameof(BackgroundTaskSettings));
-            _taskRunner = taskRunner ?? throw new ArgumentNullException(nameof(ITaskRunningService));
+            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(IServiceProvider));
             _logger = logger;
         }
 
@@ -39,7 +40,13 @@ namespace ChangeLog.API.Services
             {
                 _logger.LogTrace($"Background Service: Processing...");
 
-                _ = _taskRunner.TryRunTask();
+                using (var scope = _serviceProvider.CreateScope())
+                {
+                    var taskRunner = scope.ServiceProvider.GetRequiredService<ITaskRunningService>();
+
+                    // to keep scope alive we can't just fire & forget here
+                    await taskRunner.TryRunTask();
+                }
 
                 await Task.Delay(_settings.Period);
             }

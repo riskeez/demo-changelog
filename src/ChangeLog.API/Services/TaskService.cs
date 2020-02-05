@@ -63,9 +63,9 @@ namespace ChangeLog.API.Services
         {
             if (activeOnly)
             {
-                return _taskRepository.GetTasksAsync(x => x.Status == TaskState.Active, count);
+                return _taskRepository.GetAsync(x => x.Status == TaskState.Active, count);
             }
-            return _taskRepository.GetTasksAsync(null, count);
+            return _taskRepository.GetAsync(null, count);
         }
 
         public async Task<bool> RemoveTask(int taskId)

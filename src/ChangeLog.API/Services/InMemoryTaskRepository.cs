@@ -64,7 +64,7 @@ namespace ChangeLog.API.Services
             return null;
         }
 
-        public Task<IEnumerable<TaskData>> GetTasksAsync(Expression<Func<TaskData, bool>> predicate, int count = -1, CancellationToken token = default)
+        public Task<IEnumerable<TaskData>> GetAsync(Expression<Func<TaskData, bool>> predicate, int count = -1, CancellationToken token = default)
         {
             var tasks = _tasks.Values.AsEnumerable();
             if (predicate != null)

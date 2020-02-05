@@ -1,0 +1,3 @@
+﻿Add-Migration TaskDbContextMigration_v0001 -Project "ChangeLog.Domain" -Context TaskDbContext -o "Migrations"
+
+Update-Database -Project "ChangeLog.Domain" -Context TaskDbContext

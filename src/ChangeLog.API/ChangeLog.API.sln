@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChangeLog.API", "ChangeLog.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChangeLog.API.Tests", "..\ChangeLog.API.Tests\ChangeLog.API.Tests.csproj", "{A5BC51F9-823C-45A0-8980-3FE943286A1B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangeLog.Core", "..\ChangeLog.Core\ChangeLog.Core.csproj", "{DE39A0A7-C271-41DA-B407-F838EDEFE375}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChangeLog.Core", "..\ChangeLog.Core\ChangeLog.Core.csproj", "{DE39A0A7-C271-41DA-B407-F838EDEFE375}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangeLog.Domain", "..\ChangeLog.Domain\ChangeLog.Domain.csproj", "{7C60A399-E3BA-4415-B608-CE918D973B43}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{DE39A0A7-C271-41DA-B407-F838EDEFE375}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE39A0A7-C271-41DA-B407-F838EDEFE375}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE39A0A7-C271-41DA-B407-F838EDEFE375}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C60A399-E3BA-4415-B608-CE918D973B43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C60A399-E3BA-4415-B608-CE918D973B43}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C60A399-E3BA-4415-B608-CE918D973B43}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C60A399-E3BA-4415-B608-CE918D973B43}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

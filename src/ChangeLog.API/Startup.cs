@@ -7,6 +7,8 @@ using Microsoft.OpenApi.Models;
 using ChangeLog.API.Infrastructure.Settings;
 using ChangeLog.API.Services;
 using ChangeLog.Core.Services;
+using Microsoft.EntityFrameworkCore;
+using ChangeLog.Domain;
 
 namespace ChangeLog.API
 {
@@ -29,10 +31,14 @@ namespace ChangeLog.API
 
             services.Configure<BackgroundTaskSettings>(_configuration.GetSection("BackgroundTask"));
             services.Configure<TaskExecutionSettings>(_configuration.GetSection("Execution"));
-            
-            services.AddSingleton<ITaskRepository, InMemoryTaskRepository>();
+
+            services.AddTransient<ITaskRunningService, TaskRunningService>();
+
+            // Register AddInMemoryTaskRepository()
+            // for InMemory repository implementation
+            services.AddEFTaskRepository(opt => opt.UseSqlServer(_configuration.GetConnectionString("TaskStorage")));
+
             services.AddSingleton<ITaskExecutionPool, TaskExecutionPool>();
-            services.AddSingleton<ITaskRunningService, TaskRunningService>();
 
             services.AddScoped<ITaskService, TaskService>();
             services.AddScoped<IChangelogService, StubChangelogService>();

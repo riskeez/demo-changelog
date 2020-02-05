@@ -6,45 +6,73 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using ChangeLog.Core.Services;
 using ChangeLog.Core;
+using Microsoft.Extensions.Options;
+using ChangeLog.API.Infrastructure.Settings;
+using System.Collections.Generic;
 
 namespace ChangeLog.API.Services
 {
     public class TaskExecutionPool : ITaskExecutionPool, IDisposable
     {
+        private readonly TaskExecutionSettings _settings;
+        private readonly SemaphoreSlim _locker;
+
         private readonly ITaskRepository _taskRepo;
         private readonly ILogger _logger;
 
         private ConcurrentDictionary<int, ActiveTaskData> _activeTasks = new ConcurrentDictionary<int, ActiveTaskData>();
 
-        public TaskExecutionPool(ITaskRepository taskRepository, ILogger<TaskExecutionPool> logger)
+        public TaskExecutionPool(IOptions<TaskExecutionSettings> options, ITaskRepository taskRepository, ILogger<TaskExecutionPool> logger)
         {
+            _settings = options?.Value ?? throw new ArgumentNullException(nameof(TaskExecutionSettings));
             _taskRepo = taskRepository ?? throw new ArgumentNullException(nameof(ITaskRepository));
             _logger = logger;
+
+            _locker = new SemaphoreSlim(_settings.ParallelRunExecution);
         }
 
         public async Task<TaskData> GetNextTaskAsync(CancellationToken token = default)
         {
-            var tasks = await _taskRepo.GetTasksAsync(x => x.Status == TaskState.Planned, 1, token);
+            var tasks = await _taskRepo.GetAsync(x => x.Status == TaskState.Planned, 1, token);
 
             return tasks.FirstOrDefault();
         }
 
+        public IEnumerable<TaskData> GetActiveTasksAsync()
+        {
+            return _activeTasks.Values.Select(x => x.Data);
+        }
+
         public async Task<ActiveTaskData> SetActiveAsync(TaskData task, CancellationToken token = default)
         {
+            if (!_locker.Wait(0))
+            {
+                _logger.LogDebug("Skipped. Max amount of parallel running tasks");
+                return null;
+            }
+
             ActiveTaskData activeTask = new ActiveTaskData();
 
-            if (_activeTasks.TryAdd(task.Id, activeTask))
+            try
             {
-                task.Status = TaskState.Active;
-                task.StartedAt = DateTimeOffset.UtcNow;
 
-                activeTask.Init(task);
+                if (_activeTasks.TryAdd(task.Id, activeTask))
+                {
+                    task.Status = TaskState.Active;
+                    task.StartedAt = DateTimeOffset.UtcNow;
 
-                _logger.LogInformation($"Task {task.Id} is activated");
+                    activeTask.Init(task);
 
-                await _taskRepo.UpdateAsync(task, token);
+                    _logger.LogInformation($"Task {task.Id} is activated");
 
-                return activeTask;
+                    await _taskRepo.UpdateAsync(task, token);
+
+                    return activeTask;
+                }
+            }
+            finally
+            {
+                _locker.Release();
             }
 
             return null;

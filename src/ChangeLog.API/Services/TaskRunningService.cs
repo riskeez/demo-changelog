@@ -2,8 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using ChangeLog.API.Infrastructure.Settings;
 using ChangeLog.Core.Services;
 using ChangeLog.Core;
 
@@ -14,16 +12,10 @@ namespace ChangeLog.API.Services
         private readonly ITaskExecutionPool _taskPool;
         private readonly ILogger _logger;
 
-        private readonly TaskExecutionSettings _settings;
-        private readonly SemaphoreSlim _locker;
-
-        public TaskRunningService(IOptions<TaskExecutionSettings> options, ITaskExecutionPool queuedTasks, ILogger<TaskRunningService> logger)
+        public TaskRunningService(ITaskExecutionPool pool, ILogger<TaskRunningService> logger)
         {
-            _settings = options?.Value ?? throw new ArgumentNullException(nameof(TaskExecutionSettings));
-            _taskPool = queuedTasks ?? throw new ArgumentNullException(nameof(ITaskExecutionPool));
+            _taskPool = pool ?? throw new ArgumentNullException(nameof(ITaskExecutionPool));
             _logger = logger;
-
-            _locker = new SemaphoreSlim(_settings.ParallelRunExecution);
         }
 
         /// <summary>
@@ -55,19 +47,10 @@ namespace ChangeLog.API.Services
         /// Try to run a next task in the task queue
         /// </summary>
         /// <returns></returns>
-        public Task<ExecutionResult> TryRunTask()
+        public async Task<ExecutionResult> TryRunTask()
         {
-            if (!_locker.Wait(0))
-            {
-                _logger.LogDebug("Skipped. Max amount of parallel running tasks");
-                return Task.FromResult(new ExecutionResult() { Result = ExecuteResult.NoResult }) ;
-            }
+            CancellationToken cancellationToken = default;
 
-            return RunTaskAsync();
-        }
-
-        private async Task<ExecutionResult> RunTaskAsync(CancellationToken cancellationToken = default)
-        {
             ExecutionResult execResult = new ExecutionResult() { Result = ExecuteResult.NoResult };
             try
             {
@@ -112,10 +95,7 @@ namespace ChangeLog.API.Services
 
                 execResult.Result = ExecuteResult.Error;
             }
-            finally
-            {
-                _locker.Release();
-            }
+
             return execResult;
         }
 
