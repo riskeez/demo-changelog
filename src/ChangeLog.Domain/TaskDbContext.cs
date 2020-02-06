@@ -10,7 +10,7 @@ namespace ChangeLog.Domain
         {
         }
 
-        public DbSet<TaskData> Tasks;
+        public DbSet<TaskData> Tasks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

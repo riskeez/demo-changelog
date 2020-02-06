@@ -10,11 +10,9 @@ namespace ChangeLog.Domain
     {
         public static IServiceCollection AddEFTaskRepository(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction)
         {
-            var optBuilder = new DbContextOptionsBuilder<TaskDbContext>();
-            optionsAction(optBuilder);
+            services.AddDbContextPool<TaskDbContext>(optionsAction);
 
             return services.RemoveAll<ITaskRepository>()
-                .AddTransient(x => optBuilder.Options)
                 .AddTransient<ITaskRepository, EFTaskRepository>();
         }
     }

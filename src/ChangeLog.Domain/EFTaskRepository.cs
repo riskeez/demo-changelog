@@ -29,9 +29,10 @@ namespace ChangeLog.Domain
             using var context = GetContext();
 
             var data = await context.Tasks.AddAsync(task, token);
-            _logger.LogInformation($"Task {task.Id} added");
 
-            await context.SaveChangesAsync(token);
+            var res = await context.SaveChangesAsync(token);
+
+            _logger.LogInformation($"Task {data.Entity.Id} added");
 
             return data.Entity;
         }

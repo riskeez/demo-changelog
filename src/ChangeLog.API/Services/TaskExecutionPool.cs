@@ -103,6 +103,7 @@ namespace ChangeLog.API.Services
             {
                 finishedTask.Data.Status = TaskState.Finished;
                 finishedTask.Data.FinishedAt = DateTimeOffset.UtcNow;
+                finishedTask.Data.PercentComplete = 100;
 
                 _logger.LogInformation($"Task {taskId} is finished");
 
