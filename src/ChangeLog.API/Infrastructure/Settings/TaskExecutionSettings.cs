@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ChangeLog.API.Infrastructure.Settings
+namespace ChangeLog.API.Infrastructure
 {
     public class TaskExecutionSettings
     {

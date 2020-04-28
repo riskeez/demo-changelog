@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using ChangeLog.API.Infrastructure.Settings;
+using ChangeLog.API.Infrastructure;
 using ChangeLog.API.Services;
 using ChangeLog.Core.Services;
 using Microsoft.EntityFrameworkCore;
@@ -34,9 +34,9 @@ namespace ChangeLog.API
 
             services.AddTransient<ITaskRunningService, TaskRunningService>();
 
-            // Register AddInMemoryTaskRepository()
-            // for InMemory repository implementation
-            services.AddEFTaskRepository(opt => opt.UseSqlServer(_configuration.GetConnectionString("TaskStorage")));
+            // Register AddInMemoryTaskRepository() for InMemory repository implementation
+            services.AddInMemoryTaskRepository();
+            //services.AddEFTaskRepository(opt => opt.UseSqlServer(_configuration.GetConnectionString("TaskStorage")));
 
             services.AddSingleton<ITaskExecutionPool, TaskExecutionPool>();
 

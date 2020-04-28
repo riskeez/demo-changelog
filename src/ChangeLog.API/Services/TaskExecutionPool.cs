@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using ChangeLog.Core.Services;
 using ChangeLog.Core;
 using Microsoft.Extensions.Options;
-using ChangeLog.API.Infrastructure.Settings;
+using ChangeLog.API.Infrastructure;
 using System.Collections.Generic;
 
 namespace ChangeLog.API.Services
